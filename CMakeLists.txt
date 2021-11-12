@@ -131,3 +131,5 @@ target_link_libraries(ebpfverifier PRIVATE ${YAML_CPP_LIBRARIES})
 target_compile_options(ebpfverifier PRIVATE ${COMMON_FLAGS})
 
 target_link_libraries(run_yaml PRIVATE ebpfverifier)
+
+install(TARGETS check DESTINATION bin)
