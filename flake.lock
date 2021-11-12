@@ -17,6 +17,22 @@
         "type": "github"
       }
     },
+    "etl": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1635919452,
+        "narHash": "sha256-p/w3EM3WvZNEBpJ2Dn8ZT4aGH688YaNJC2SObGBVVyc=",
+        "owner": "ETLCPP",
+        "repo": "etl",
+        "rev": "323f8eeff892525cacd298efeceb4740f24479c9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ETLCPP",
+        "repo": "etl",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "locked": {
         "lastModified": 1634851050,
@@ -68,6 +84,7 @@
     "root": {
       "inputs": {
         "elfio": "elfio",
+        "etl": "etl",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "radix_tree": "radix_tree"

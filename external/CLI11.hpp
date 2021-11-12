@@ -39,7 +39,7 @@
 
 // Standard combined includes:
 
-#include <algorithm>
+#include "etl/algorithm.h"
 #include <cmath>
 #include <cstdint>
 #include <exception>

@@ -4,9 +4,11 @@
 #if __linux__
 #include <linux/bpf.h>
 #define PTYPE(name, descr, native_type, prefixes) \
-             {name, descr, native_type, prefixes}
+             {name, descr, native_type}
+             // TODO: fix {name, descr, native_type, prefixes}
 #define PTYPE_PRIVILEGED(name, descr, native_type, prefixes) \
-                        {name, descr, native_type, prefixes, true}
+                        {name, descr, native_type, true}
+                        // TODO: fix {name, descr, native_type, prefixes, true}
 #else
 #define PTYPE(name, descr, native_type, prefixes) \
              {name, descr, 0, prefixes}
@@ -74,27 +76,30 @@ const std::vector<EbpfProgramType> linux_program_types = {
     PTYPE("lirc_mode2", &g_sk_msg_md, BPF_PROG_TYPE_SOCKET_FILTER, {"lirc_mode2"}),
 };
 
-static EbpfProgramType get_program_type_linux(const std::string& section, const std::string& path) {
+static EbpfProgramType get_program_type_linux(const etl::string<SIZE>& section, const etl::string<SIZE>& path) {
     EbpfProgramType type{};
 
     // linux only deduces from section, but cilium and cilium_test have this information
     // in the filename:
     // * cilium/bpf_xdp.o:from-netdev is XDP
     // * bpf_cilium_test/bpf_lb-DLB_L3.o:from-netdev is SK_SKB
-    if (path.find("cilium") != std::string::npos) {
-        if (path.find("xdp") != std::string::npos) {
+    if (path.find("cilium") != etl::string<SIZE>::npos) {
+        if (path.find("xdp") != etl::string<SIZE>::npos) {
             return linux_xdp_program_type;
         }
-        if (path.find("lxc") != std::string::npos) {
+        if (path.find("lxc") != etl::string<SIZE>::npos) {
             return cilium_lxc_program_type;
         }
     }
 
     for (const EbpfProgramType& t : linux_program_types) {
+        // TODO: fix
+        /*
         for (const std::string& prefix : t.section_prefixes) {
             if (section.find(prefix) == 0)
                 return t;
         }
+        */
     }
 
     return linux_socket_filter_program_type;
@@ -150,13 +155,13 @@ EbpfMapType get_map_type_linux(uint32_t platform_specific_type)
     return type;
 }
 
-void parse_maps_section_linux(std::vector<EbpfMapDescriptor>& map_descriptors, const char* data, size_t size, const ebpf_platform_t* platform, ebpf_verifier_options_t options)
+void parse_maps_section_linux(etl::vector<EbpfMapDescriptor, SIZE_VEC>& map_descriptors, const char* data, size_t size, const ebpf_platform_t* platform, ebpf_verifier_options_t options)
 {
     if (size % sizeof(bpf_load_map_def) != 0) {
-        throw std::runtime_error(std::string("bad maps section size"));
+        throw "bad maps section size";
     }
 
-    auto mapdefs = std::vector<bpf_load_map_def>((bpf_load_map_def*)data, (bpf_load_map_def*)(data + size));
+    auto mapdefs = etl::vector<bpf_load_map_def, SIZE_VEC>((bpf_load_map_def*)data, (bpf_load_map_def*)(data + size));
     for (auto const& s : mapdefs) {
         EbpfMapType type = get_map_type_linux(s.type);
         map_descriptors.emplace_back(EbpfMapDescriptor{

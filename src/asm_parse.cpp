@@ -1,6 +1,6 @@
 // Copyright (c) Prevail Verifier contributors.
 // SPDX-License-Identifier: MIT
-#include <algorithm>
+#include "etl/algorithm.h"
 #include <map>
 #include <regex>
 #include <unordered_set>

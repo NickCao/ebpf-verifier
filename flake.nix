@@ -10,8 +10,12 @@
       url = "github:serge1/ELFIO/028b4117fafdab46b171473eebba9cccaa05e602";
       flake = false;
     };
+    etl = {
+      url = "github:ETLCPP/etl";
+      flake = false;
+    };
   };
-  outputs = { self, nixpkgs, flake-utils, radix_tree, elfio }:
+  outputs = { self, nixpkgs, flake-utils, radix_tree, elfio, etl }:
     flake-utils.lib.eachDefaultSystem
       (system:
         let
@@ -27,6 +31,7 @@
               postPatch = ''
                 ln -s ${radix_tree} external/radix_tree
                 ln -s ${elfio} external/ELFIO
+                ln -s ${etl} external/etl
               '';
             };
           };

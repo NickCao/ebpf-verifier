@@ -399,13 +399,6 @@ std::ostream& operator<<(std::ostream& o, const EbpfMapDescriptor& desc) {
     ")";
 }
 
-void print_map_descriptors(const std::vector<EbpfMapDescriptor>& descriptors, std::ostream& o) {
-    int i = 0;
-    for (const auto& desc : descriptors) {
-        o << "map " << i << ":" << desc << "\n";
-        i++;
-    }
-}
 
 void print_dot(const cfg_t& cfg, std::ostream& out) {
     out << "digraph program {\n";

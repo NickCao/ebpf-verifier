@@ -1,17 +1,17 @@
 // Copyright (c) Prevail Verifier contributors.
 // SPDX-License-Identifier: MIT
-#include <cassert>
-#include <cstring> // memcmp
-#include <iostream>
-#include <string>
-#include <vector>
+#include "etl/cstring.h" // memcmp
+#include "etl/string.h"
+#include "etl/vector.h"
+#include "etl/variant.h"
+#include "etl/visitor.h"
 
 #include "ebpf_vm_isa.hpp"
 
 #include "asm_unmarshal.hpp"
 
-using std::string;
-using std::vector;
+using etl::string;
+using etl::vector;
 
 int opcode_to_width(uint8_t opcode) {
     switch (opcode & INST_SIZE_MASK) {
@@ -36,18 +36,18 @@ uint8_t width_to_opcode(int width) {
 }
 
 template <typename T>
-void compare(const string& field, T actual, T expected) {
-    if (actual != expected)
-        std::cerr << field << ": (actual) " << std::hex << (int)actual << " != " << (int)expected << " (expected)\n";
+void compare(const string<SIZE>& field, T actual, T expected) {
 }
 
-struct InvalidInstruction : std::invalid_argument {
+struct InvalidInstruction {
     size_t pc;
-    explicit InvalidInstruction(size_t pc, const char* what) : std::invalid_argument{what}, pc{pc} {}
+    const char* what;
+    explicit InvalidInstruction(size_t pc, const char* what) : what{what}, pc{pc} {}
 };
 
-struct UnsupportedMemoryMode : std::invalid_argument {
-    explicit UnsupportedMemoryMode(const char* what) : std::invalid_argument{what} {}
+struct UnsupportedMemoryMode {
+    const char* what;
+    explicit UnsupportedMemoryMode(const char* what) : what{what} {}
 };
 
 static auto getMemIsLoad(uint8_t opcode) -> bool {
@@ -81,13 +81,13 @@ static auto getMemWidth(uint8_t opcode) -> int {
 // }
 
 struct Unmarshaller {
-    vector<vector<string>>& notes;
+    vector<vector<string<SIZE>, SIZE_VEC>, SIZE_VEC>& notes;
     const program_info& info;
-    void note(const string& what) { notes.back().emplace_back(what); }
+    void note(const string<SIZE>& what) { notes.back().emplace_back(what); }
     void note_next_pc() { notes.emplace_back(); }
-    explicit Unmarshaller(vector<vector<string>>& notes, const program_info& info) : notes{notes}, info{info} { note_next_pc(); }
+    explicit Unmarshaller(vector<vector<string<SIZE>, SIZE_VEC>, SIZE_VEC>& notes, const program_info& info) : notes{notes}, info{info} { note_next_pc(); }
 
-    auto getAluOp(size_t pc, ebpf_inst inst) -> std::variant<Bin::Op, Un::Op> {
+    auto getAluOp(size_t pc, ebpf_inst inst) -> etl::variant<Bin::Op, Un::Op> {
         switch ((inst.opcode >> 4) & 0xF) {
         case 0x0: return Bin::Op::ADD;
         case 0x1: return Bin::Op::SUB;
@@ -230,7 +230,9 @@ struct Unmarshaller {
     auto makeAluOp(size_t pc, ebpf_inst inst) -> Instruction {
         if (inst.dst == R10_STACK_POINTER)
             note("Invalid target r10");
-        return std::visit(overloaded{[&](Un::Op op) -> Instruction { return Un{.op = op, .dst = Reg{inst.dst}}; },
+        // TODO: fix visit
+        /*
+        return etl::visit(overloaded{[&](Un::Op op) -> Instruction { return Un{.op = op, .dst = Reg{inst.dst}}; },
                                      [&](Bin::Op op) -> Instruction {
                                          Bin res{
                                              .op = op,
@@ -244,9 +246,10 @@ struct Unmarshaller {
                                          return res;
                                      }},
                           getAluOp(pc, inst));
+        */
     }
 
-    auto makeLddw(ebpf_inst inst, int32_t next_imm, const vector<ebpf_inst>& insts, pc_t pc) -> Instruction {
+    auto makeLddw(ebpf_inst inst, int32_t next_imm, const vector<ebpf_inst, SIZE_VEC>& insts, pc_t pc) -> Instruction {
         if (pc >= insts.size() - 1)
             note("incomplete LDDW");
         if (inst.src > 1 || inst.dst > R10_STACK_POINTER || inst.offset != 0)
@@ -334,7 +337,7 @@ struct Unmarshaller {
         return res;
     }
 
-    auto makeJmp(ebpf_inst inst, const vector<ebpf_inst>& insts, pc_t pc) -> Instruction {
+    auto makeJmp(ebpf_inst inst, const vector<ebpf_inst, SIZE_VEC>& insts, pc_t pc) -> Instruction {
         switch ((inst.opcode >> 4) & 0xF) {
         case 0x8:
             if (!info.platform->is_helper_usable(inst.imm))
@@ -363,8 +366,8 @@ struct Unmarshaller {
         }
     }
 
-    vector<LabeledInstruction> unmarshal(vector<ebpf_inst> const& insts) {
-        vector<LabeledInstruction> prog;
+    vector<LabeledInstruction, SIZE_VEC> unmarshal(vector<ebpf_inst, SIZE_VEC> const& insts) {
+        vector<LabeledInstruction, SIZE_VEC> prog;
         int exit_count = 0;
         if (insts.empty()) {
             throw std::invalid_argument("Zero length programs are not allowed");
@@ -433,18 +436,18 @@ struct Unmarshaller {
     }
 };
 
-std::variant<InstructionSeq, std::string> unmarshal(const raw_program& raw_prog, vector<vector<string>>& notes) {
+etl::variant<InstructionSeq, etl::string<SIZE>> unmarshal(const raw_program& raw_prog, vector<vector<string<SIZE>, SIZE_VEC>, SIZE_VEC>& notes) {
     global_program_info = raw_prog.info;
     try {
-        return Unmarshaller{notes, raw_prog.info}.unmarshal(raw_prog.prog);
+       // TODO: fix
+       // return Unmarshaller{notes, raw_prog.info}.unmarshal(raw_prog.prog);
     } catch (InvalidInstruction& arg) {
-        std::ostringstream ss;
-        ss << arg.pc << ": " << arg.what() << "\n";
-        return ss.str();
+       // TODO: fix
+       // return arg.what;
     }
 }
 
-std::variant<InstructionSeq, std::string> unmarshal(const raw_program& raw_prog) {
-    vector<vector<string>> notes;
+etl::variant<InstructionSeq, etl::string<SIZE>> unmarshal(const raw_program& raw_prog) {
+    vector<vector<string<SIZE>, SIZE_VEC>, SIZE_VEC> notes;
     return unmarshal(raw_prog, notes);
 }

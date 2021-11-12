@@ -1,12 +1,11 @@
 // Copyright (c) Prevail Verifier contributors.
 // SPDX-License-Identifier: MIT
-#include <cassert>
 
-#include <algorithm>
-#include <map>
-#include <optional>
-#include <string>
-#include <vector>
+#include "etl/algorithm.h"
+#include "etl/map.h"
+#include "etl/optional.h"
+#include "etl/string.h"
+#include "etl/vector.h"
 
 #include "crab_utils/debug.hpp"
 #include "asm_syntax.hpp"

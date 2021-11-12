@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 
-#include <map>
-#include <string>
-#include <vector>
+#include "etl/map.h"
+#include "etl/string.h"
+#include "etl/vector.h"
 #include "ebpf_base.h"
 #include "ebpf_vm_isa.hpp"
 
 constexpr int EBPF_STACK_SIZE = 512;
+constexpr size_t SIZE = 100;
+constexpr size_t SIZE_VEC = 200;
+constexpr size_t SIZE_MAP = 100;
 
 enum class EbpfMapValueType {
     ANY, MAP, PROGRAM
@@ -16,7 +19,7 @@ enum class EbpfMapValueType {
 
 struct EbpfMapType {
     uint32_t platform_specific_type; // EbpfMapDescriptor.type value.
-    std::string name; // For ease of display, not used by the verifier.
+    etl::string<SIZE> name; // For ease of display, not used by the verifier.
     bool is_array; // True if key is integer in range [0,max_entries-1].
     EbpfMapValueType value_type; // The type of items stored in the map.
 };
@@ -31,13 +34,13 @@ struct EbpfMapDescriptor {
 };
 
 struct EbpfProgramType {
-    std::string name; // For ease of display, not used by the verifier.
+    etl::string<SIZE> name; // For ease of display, not used by the verifier.
     const ebpf_context_descriptor_t* context_descriptor;
     uint64_t platform_specific_data; // E.g., integer program type.
-    std::vector<std::string> section_prefixes;
+    // TODO: fix
+    // etl::vector<etl::string<SIZE>, SIZE_VEC> section_prefixes;
     bool is_privileged;
 };
-void print_map_descriptors(const std::vector<EbpfMapDescriptor>& descriptors, std::ostream& o);
 
 using EquivalenceKey = std::tuple<
     EbpfMapValueType /* value_type */,
@@ -47,15 +50,15 @@ using EquivalenceKey = std::tuple<
 
 struct program_info {
     const struct ebpf_platform_t* platform;
-    std::vector<EbpfMapDescriptor> map_descriptors;
+    etl::vector<EbpfMapDescriptor, SIZE_VEC> map_descriptors;
     EbpfProgramType type;
-    std::map<EquivalenceKey, int> cache;
+    etl::map<EquivalenceKey, int, SIZE_MAP> cache;
 };
 
 struct raw_program {
-    std::string filename;
-    std::string section;
-    std::vector<ebpf_inst> prog;
+    etl::string<SIZE> filename;
+    etl::string<SIZE> section;
+    etl::vector<ebpf_inst, SIZE_VEC> prog;
     program_info info;
 };
 

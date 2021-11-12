@@ -10,7 +10,7 @@
 #include "spec_type_descriptors.hpp"
 #include "helpers.hpp"
 
-typedef EbpfProgramType (*ebpf_get_program_type_fn)(const std::string& section, const std::string& path);
+typedef EbpfProgramType (*ebpf_get_program_type_fn)(const etl::string<SIZE>& section, const etl::string<SIZE>& path);
 
 typedef EbpfMapType (*ebpf_get_map_type_fn)(uint32_t platform_specific_type);
 
@@ -25,7 +25,7 @@ typedef int (*ebpf_create_map_fn)(uint32_t map_type, uint32_t key_size, uint32_t
 
 // Parse map records and allocate map fd's.
 // In the future we may want to move map fd allocation after the verifier step.
-typedef void (*ebpf_parse_maps_section_fn)(std::vector<EbpfMapDescriptor>& map_descriptors, const char* data, size_t size, const struct ebpf_platform_t* platform, ebpf_verifier_options_t options);
+typedef void (*ebpf_parse_maps_section_fn)(etl::vector<EbpfMapDescriptor, SIZE_VEC>& map_descriptors, const char* data, size_t size, const struct ebpf_platform_t* platform, ebpf_verifier_options_t options);
 
 typedef EbpfMapDescriptor& (*ebpf_get_map_descriptor_fn)(int map_fd);
 

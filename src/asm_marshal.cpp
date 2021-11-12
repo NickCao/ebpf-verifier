@@ -1,9 +1,8 @@
 // Copyright (c) Prevail Verifier contributors.
 // SPDX-License-Identifier: MIT
-#include <cassert>
-#include <map>
-#include <variant>
-#include <vector>
+#include "etl/map.h"
+#include "etl/variant.h"
+#include "etl/vector.h"
 
 #include "asm_marshal.hpp"
 #include "asm_ostream.hpp"

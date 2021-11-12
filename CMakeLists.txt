@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(./external)
 include_directories(./external/ELFIO)
+include_directories(./external/etl/include)
 include_directories(./src)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
@@ -33,13 +34,16 @@ set(COMMON_FLAGS -Wall -Wfatal-errors -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8)
 set(RELEASE_FLAGS -O2 -flto -ffat-lto-objects)
 set(DEBUG_FLAGS -O0 -g3 -fno-omit-frame-pointer)
 set(SANITIZE_FLAGS -fsanitize=address -O1 -fno-omit-frame-pointer)
+add_compile_definitions(ETL_NO_STL)
 
 add_library(ebpfverifier ${LIB_SRC})
 
 add_executable(check src/main/check.cpp src/main/linux_verifier.cpp)
 add_executable(tests ${ALL_TEST})
 
+
 target_compile_options(ebpfverifier PRIVATE ${COMMON_FLAGS})
+# target_compile_options(ebpfverifier PRIVATE ${COMMON_FLAGS} -nostdinc -nostdlib)
 target_compile_options(ebpfverifier PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_FLAGS}>")
 target_compile_options(ebpfverifier PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_FLAGS}>")
 target_compile_options(ebpfverifier PUBLIC "$<$<CONFIG:SANITIZE>:${SANITIZE_FLAGS}>")
