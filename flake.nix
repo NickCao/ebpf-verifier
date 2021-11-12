@@ -23,7 +23,7 @@
               name = "ebpf-verifier";
               src = self;
               nativeBuildInputs = with pkgs; [ cmake ];
-              buildInputs = with pkgs; [ libyamlcpp boost ];
+              buildInputs = with pkgs; [ boost ];
               postPatch = ''
                 ln -s ${radix_tree} external/radix_tree
                 ln -s ${elfio} external/ELFIO
