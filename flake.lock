@@ -1,0 +1,79 @@
+{
+  "nodes": {
+    "elfio": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1623912711,
+        "narHash": "sha256-PYgZiIJPWjl10XGleHmSXwk/hrkF3mNKypS8j+hXQWI=",
+        "owner": "serge1",
+        "repo": "ELFIO",
+        "rev": "028b4117fafdab46b171473eebba9cccaa05e602",
+        "type": "github"
+      },
+      "original": {
+        "owner": "serge1",
+        "repo": "ELFIO",
+        "rev": "028b4117fafdab46b171473eebba9cccaa05e602",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1634851050,
+        "narHash": "sha256-N83GlSGPJJdcqhUxSCS/WwW5pksYf3VP1M13cDRTSVA=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "c91f3de5adaf1de973b797ef7485e441a65b8935",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1636635602,
+        "narHash": "sha256-h1DBlHjn7/JiBzT65HwDcYkFZ6v1VQqDlsLRBj1EWuQ=",
+        "owner": "NickCao",
+        "repo": "nixpkgs",
+        "rev": "43b394b98e352562a6ea63db387b9fbdd858727f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NickCao",
+        "ref": "nixos-unstable-small",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "radix_tree": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1614747125,
+        "narHash": "sha256-9dstbWrXVg+DiExCABvoRoVsG6qvRyF2Y4Zl/IGyqls=",
+        "owner": "ytakano",
+        "repo": "radix_tree",
+        "rev": "2fafde681c9580262795071c81c0576cb077e7e9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ytakano",
+        "repo": "radix_tree",
+        "rev": "2fafde681c9580262795071c81c0576cb077e7e9",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "elfio": "elfio",
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs",
+        "radix_tree": "radix_tree"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
