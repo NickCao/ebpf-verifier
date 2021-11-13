@@ -79,7 +79,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
 endif ()
 
-add_library(ebpfverifier ${LIB_SRC})
+add_library(ebpfverifier SHARED ${LIB_SRC})
 
 add_executable(check src/main/check.cpp src/main/linux_verifier.cpp)
 add_executable(tests ${ALL_TEST})
